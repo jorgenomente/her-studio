@@ -149,3 +149,17 @@ Se actualizó rpc_receive_purchase para crear movimientos de stock al recibir co
 
 - Cierra el ciclo de stock automáticamente al recibir compras.
 - Evita duplicar movimientos si ya fue recibida.
+
+## 2026-01-21 — Compras MVP (crear + recibir + stock automático) implementado
+
+**Tipo:** feature  
+**Alcance:** frontend
+
+**Resumen**
+Se implementó el módulo de compras con creación, recepción y actualización automática de stock.
+
+**Impacto**
+
+- Permite crear compras y recibirlas desde la UI.
+- Genera movimientos de stock al recibir.
+- Respeta permisos de stock y contexto de sucursal.
