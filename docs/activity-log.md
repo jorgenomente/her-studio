@@ -215,3 +215,30 @@ Se implementó el módulo de configuración con staff, servicios y usuarios/invi
 
 - Admin/superadmin pueden operar configuración sin devs.
 - Incluye flujo de invitación con link y aceptación pública.
+## 2026-01-21 — Reservas públicas MVP implementadas
+
+**Tipo:** feature  
+**Alcance:** frontend | db | ux
+
+**Resumen**
+Se incorporó el flujo público de reservas con landing renovada, selección por pasos y disponibilidad simple por día, más RPCs públicas y bucket de comprobantes.
+
+**Impacto**
+
+- Habilita reservas guest-first con selección de sucursal, servicio y horario.
+- Expone disponibilidad por día y permite subir comprobantes de seña.
+- No agrega verificación automática de seña ni pagos online.
+
+## 2026-01-21 — Hardening depósitos: bucket privado + attach RPC + upload server
+
+**Tipo:** feature  
+**Alcance:** backend | db | rls
+
+**Resumen**
+Se movió el flujo de comprobantes de seña a un bucket privado con upload server-side y RPC pública controlada para adjuntar proof y monto en deposit.
+
+**Impacto**
+
+- Evita exponer comprobantes en buckets públicos.
+- Guarda `deposit.proof_url` y `deposit.amount` con estado pending.
+- Mantiene reservas públicas sin modificar `rpc_public_create_reservation`.
