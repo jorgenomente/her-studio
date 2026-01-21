@@ -4,60 +4,68 @@
 **Source of truth:** `docs/core-system-contract.md`, `docs/product-spec-v1.4.md`
 
 ## Estado
-**FAIL** — Lint con errores y `supabase db diff` no pudo ejecutarse.
+**FAIL** — `supabase db diff` no pudo completarse (conexión rechazada). Lint OK.
 
 ## Checks técnicos
-- **npm run lint:** ❌ FAIL
-  - Errores `@typescript-eslint/no-explicit-any` en varios archivos `/app` y `/lib/queries/*`.
-  - Errores `react-hooks/set-state-in-effect` en `components/public/booking-date-selector.tsx`.
+- **npm run lint:** ✅ PASS
 - **npm run typecheck:** N/A (no existe script)
 - **npm run build:** ✅ PASS
   - Warnings: workspace root detectado por lockfiles; middleware deprecated.
 - **npx supabase db diff:** ❌ FAIL
-  - Error: puerto 54320 en uso al crear shadow DB.
-  - Requiere `supabase stop --project-id her-studio` o cambiar puerto en `supabase/config.toml`.
+  - Error: `dial tcp 127.0.0.1:54322: connect: connection refused`.
+  - Se ejecutó `npx supabase stop` antes del diff.
+  - Workaround (local):
+    - `npx supabase start`
+    - `npx supabase db diff`
+    - Si falla: `lsof -i :54322` → matar proceso, reintentar.
 - **Migraciones pendientes:** ⚠️ No verificado (db diff falló).
-- **types/supabase.ts:** ⚠️ No verificado contra schema remoto. Recomendar `supabase gen types` antes de merge.
+- **types/supabase.ts:** ⚠️ No verificado contra schema remoto.
+  - Recomendación (no bloqueante):
+    - `npx supabase gen types typescript --local > types/supabase.ts`
 
-## Smoke tests manuales
-> No ejecutados en este entorno (requiere entorno local + datos reales). Marcar como pendientes.
+## Smoke tests manuales (runbook local)
+**Setup local:**
+- `npx supabase start`
+- `npm run dev`
 
 ### A) Staff (internal)
-- Login /login → /app redirect: ⏳
-- Branch context (1 vs N): ⏳
-- Agenda carga + cambiar estado: ⏳
-- Registrar/verificar seña (permisos): ⏳
-- POS cobrar cita / venta sin cita / pagos del día: ⏳
-- Stock movimiento manual y snapshot: ⏳
-- Compras crear/recibir + stock sube: ⏳
-- Clientes búsqueda + perfil con métricas: ⏳
-- Configuración staff + disponibilidad: ⏳
-- Servicios por sucursal toggles: ⏳
-- Usuarios invitar y generar link: ⏳
-- Seller NO ve /app/configuracion: ⏳
+- ☐ Login /login → /app redirect
+- ☐ Branch context: 1 branch entra directo / N branches selector + data cambia
+- ☐ Agenda /app/agenda carga
+- ☐ Abrir cita y cambiar estado
+- ☐ Registrar/verificar seña (si permisos)
+- ☐ POS: cobrar cita + venta sin cita + pagos del día se actualizan
+- ☐ Stock: movimiento manual cambia snapshot
+- ☐ Compras: crear pendiente + recibir con qty editables → stock sube
+- ☐ Clientes: buscar por `q=` + perfil muestra historial/métricas
+- ☐ Configuración: staff + disponibilidad
+- ☐ Configuración: servicios por sucursal toggles
+- ☐ Configuración: usuarios invitar y generar link
+- ☐ Seller NO ve /app/configuracion
 
 ### B) Público (booking)
-- Landing / render mobile: ⏳
-- /reservar flow completo crea appointment: ⏳
-- Disponibilidad sin solapados: ⏳
-- Depósito: upload proof, no URL pública, proof_path guardado, bucket privado: ⏳
+- ☐ Landing `/` render OK en mobile
+- ☐ `/reservar` flow completo crea appointment
+- ☐ Disponibilidad no ofrece slots ocupados
+- ☐ Depósito: upload proof; no URL pública; `deposit.proof_url` = path; bucket privado
 
 ## Seguridad rápida (high-level)
-- Bucket proofs privado: ⚠️ No verificado (migración aplicada, falta check en consola).
-- /api/public/deposit/upload usa service role solo server-side: ✅ (por código).
-- rpc_public_* validaciones mínimas: ✅ (por migraciones; requiere verificación en DB).
+- Bucket proofs privado: ⚠️ Verificar en consola/storage.
+- `/api/public/deposit/upload` usa service role solo server-side: ✅ (por código).
+- `rpc_public_*` validaciones mínimas: ✅ (por migraciones; verificar en DB).
 
 ## Issues encontrados
-- **Blocker:** Lint falla (35 errores). Requiere corrección o aprobación explícita para ignorar.
-- **High:** `supabase db diff` no corre por puerto ocupado (no confirma drift).
+- **High:** `supabase db diff` no corre (connection refused en 54322). Sin verificación de drift.
 - **Medium:** types/supabase.ts no verificado contra schema remoto.
 
 ## Acciones tomadas
-- Se ejecutó `npm run lint` (falló) y `npm run build` (pass con warnings).
-- Se intentó `npx supabase db diff` (falló por puerto 54320 ocupado).
+- `npm run lint` → PASS
+- `npm run build` → PASS (con warnings)
+- `npx supabase stop` → OK
+- `npx supabase db diff` → FAIL (connection refused en 54322)
 
 ## Recomendación de merge
 **NO** por ahora.
-- Resolver lint o aprobar excepción.
-- Ejecutar `supabase db diff` exitoso y completar smoke tests manuales.
+- Ejecutar `supabase db diff` exitoso.
+- Completar smoke tests manuales.
 
