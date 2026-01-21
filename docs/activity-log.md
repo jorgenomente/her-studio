@@ -189,3 +189,16 @@ Se implementaron Dashboard y Reportes con lecturas por rango y breakdowns básic
 
 - Permite seguimiento diario y análisis por método/fuente/recurrente.
 - Incluye toggle global para superadmin.
+
+## 2026-01-21 — Configuración: views/RPCs para staff, servicios y usuarios
+
+**Tipo:** feature  
+**Alcance:** db
+
+**Resumen**
+Se agregaron views y RPCs para configurar staff, disponibilidad, servicios por sucursal y usuarios/invites.
+
+**Impacto**
+
+- Habilita gestión operativa sin intervención técnica.
+- Incluye flujo de invitaciones con token.
