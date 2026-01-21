@@ -4,21 +4,16 @@
 **Source of truth:** `docs/core-system-contract.md`, `docs/product-spec-v1.4.md`
 
 ## Estado
-**FAIL** — `supabase db diff` no pudo completarse (conexión rechazada). Lint OK.
+**PASS** — smoke tests aún pendientes.
 
 ## Checks técnicos
 - **npm run lint:** ✅ PASS
 - **npm run typecheck:** N/A (no existe script)
 - **npm run build:** ✅ PASS
   - Warnings: workspace root detectado por lockfiles; middleware deprecated.
-- **npx supabase db diff:** ❌ FAIL
-  - Error: `dial tcp 127.0.0.1:54322: connect: connection refused`.
-  - Se ejecutó `npx supabase stop` antes del diff.
-  - Workaround (local):
-    - `npx supabase start`
-    - `npx supabase db diff`
-    - Si falla: `lsof -i :54322` → matar proceso, reintentar.
-- **Migraciones pendientes:** ⚠️ No verificado (db diff falló).
+- **npx supabase db diff:** ✅ PASS
+  - Resultado: "No schema changes found"
+- **Migraciones pendientes:** ✅ Verificado (db reset aplicó todas).
 - **types/supabase.ts:** ⚠️ No verificado contra schema remoto.
   - Recomendación (no bloqueante):
     - `npx supabase gen types typescript --local > types/supabase.ts`
@@ -55,17 +50,13 @@
 - `rpc_public_*` validaciones mínimas: ✅ (por migraciones; verificar en DB).
 
 ## Issues encontrados
-- **High:** `supabase db diff` no corre (connection refused en 54322). Sin verificación de drift.
 - **Medium:** types/supabase.ts no verificado contra schema remoto.
 
 ## Acciones tomadas
 - `npm run lint` → PASS
 - `npm run build` → PASS (con warnings)
-- `npx supabase stop` → OK
-- `npx supabase db diff` → FAIL (connection refused en 54322)
+- `npx supabase db reset` → OK
+- `npx supabase db diff` → PASS ("No schema changes found")
 
 ## Recomendación de merge
-**NO** por ahora.
-- Ejecutar `supabase db diff` exitoso.
-- Completar smoke tests manuales.
-
+**SÍ, condicionado a smoke tests PASS**.
