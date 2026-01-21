@@ -362,11 +362,11 @@ $$;
 create or replace function public.rpc_create_invite(
   p_branch_id uuid,
   p_email text,
-  p_full_name text default null,
   p_role public.user_role,
   p_can_manage_agenda boolean,
   p_can_manage_payments boolean,
-  p_can_manage_stock boolean
+  p_can_manage_stock boolean,
+  p_full_name text default null
 )
 returns table(invite_id uuid, token text)
 language plpgsql
