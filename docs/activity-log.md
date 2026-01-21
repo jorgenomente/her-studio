@@ -108,3 +108,17 @@ Se agregaron views de lectura para perfil de cliente, historial de citas y pagos
 
 - Habilita contratos de lectura para el módulo Clientes.
 - Mantiene RLS y evita lógica de escritura.
+
+## 2026-01-21 — Clientes MVP (lista + perfil + métricas) implementado
+
+**Tipo:** feature  
+**Alcance:** frontend
+
+**Resumen**
+Se implementó el módulo de clientes con listado, búsqueda y perfil con historial.
+
+**Impacto**
+
+- Permite buscar rápido por teléfono o nombre.
+- Muestra métricas básicas, historial de citas y pagos.
+- No agrega acciones de escritura en esta etapa.
