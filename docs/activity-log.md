@@ -11,3 +11,17 @@ Se habilitó RLS en las tablas operativas y se agregaron helpers de permisos por
 - Habilita control de acceso por rol y sucursal en el MVP.
 - Define permisos de escritura por flags (agenda/pagos/stock).
 - No incluye views ni RPCs todavía.
+
+## 2026-01-21 — Views base MVP (contracts de lectura)
+
+**Tipo:** feature  
+**Alcance:** db
+
+**Resumen**
+Se agregaron views base para contratos de lectura del MVP (agenda, POS, dashboard, stock, compras y clientes).
+
+**Impacto**
+
+- Habilita lecturas consistentes para pantallas clave.
+- Mantiene RLS intacto al depender de tablas protegidas.
+- No incluye lógica compleja de disponibilidad ni reportes avanzados.
