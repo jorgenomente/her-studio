@@ -122,3 +122,17 @@ Se implementó el módulo de clientes con listado, búsqueda y perfil con histor
 - Permite buscar rápido por teléfono o nombre.
 - Muestra métricas básicas, historial de citas y pagos.
 - No agrega acciones de escritura en esta etapa.
+
+## 2026-01-21 — Stock MVP (snapshot + movimientos manuales) implementado
+
+**Tipo:** feature  
+**Alcance:** frontend
+
+**Resumen**
+Se implementó el módulo de stock con snapshot por sucursal y carga de movimientos manuales.
+
+**Impacto**
+
+- Permite consultar niveles actuales y detectar bajos.
+- Registra movimientos manuales con tipo y motivo.
+- Respeta permisos de stock y contexto de sucursal.
