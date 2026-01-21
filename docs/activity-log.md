@@ -25,3 +25,17 @@ Se agregaron views base para contratos de lectura del MVP (agenda, POS, dashboar
 - Habilita lecturas consistentes para pantallas clave.
 - Mantiene RLS intacto al depender de tablas protegidas.
 - No incluye lógica compleja de disponibilidad ni reportes avanzados.
+
+## 2026-01-21 — RPCs MVP (writes)
+
+**Tipo:** feature  
+**Alcance:** db
+
+**Resumen**
+Se agregaron RPCs mínimas de escritura para reservas públicas, agenda, señas, cobros, stock y compras.
+
+**Impacto**
+
+- Habilita operaciones críticas del MVP con validaciones internas.
+- Mantiene RLS como capa principal; solo el RPC público usa SECURITY DEFINER.
+- No incluye lógica avanzada ni automatización de stock al recibir compras.
