@@ -53,3 +53,17 @@ Se agregó el shell interno con autenticación de staff, navegación por módulo
 - Protege rutas /app con middleware.
 - Prepara permisos por rol y flags para ocultar acciones.
 - Entrega placeholders de módulos para el MVP.
+
+## 2026-01-21 — Agenda MVP (read-only) implementada
+
+**Tipo:** feature  
+**Alcance:** frontend
+
+**Resumen**
+Se implementó la pantalla de agenda con lectura desde `v_app_agenda_day`, filtros básicos y navegación al detalle.
+
+**Impacto**
+
+- Permite visualizar citas por día con estados y señales (seña/pago).
+- Respeta RLS y el contexto de sucursal activo.
+- Aún no incluye acciones de escritura.
