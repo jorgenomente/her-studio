@@ -95,3 +95,16 @@ Se agregó la pantalla POS con cobro de citas, venta sin cita y lista de pagos d
 - Permite registrar cobros con método y analytics básicos.
 - Respeta permisos de pagos y contexto de sucursal.
 - No incluye procesamiento de pagos online ni stock automático.
+
+## 2026-01-21 — Views clientes (detalle + historial)
+
+**Tipo:** feature  
+**Alcance:** db
+
+**Resumen**
+Se agregaron views de lectura para perfil de cliente, historial de citas y pagos.
+
+**Impacto**
+
+- Habilita contratos de lectura para el módulo Clientes.
+- Mantiene RLS y evita lógica de escritura.
