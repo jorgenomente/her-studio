@@ -20,7 +20,6 @@ create type public.payment_source_type as enum (
   'instagram',
   'google_maps',
   'walk_in',
-  'recurrent',
   'other'
 );
 
@@ -44,9 +43,8 @@ create table if not exists public.branch (
   updated_at timestamptz not null default now()
 );
 
-create table if not exists public."user" (
-  id uuid primary key default gen_random_uuid(),
-  auth_user_id uuid unique references auth.users(id) on delete set null,
+create table if not exists public.profiles (
+  user_id uuid primary key references auth.users(id) on delete cascade,
   email text,
   full_name text,
   status text not null default 'active',
@@ -56,7 +54,7 @@ create table if not exists public."user" (
 
 create table if not exists public.user_branch_role (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references public."user"(id) on delete cascade,
+  user_id uuid not null references public.profiles(user_id) on delete cascade,
   branch_id uuid not null references public.branch(id) on delete cascade,
   role public.user_role not null,
   can_manage_agenda boolean not null default false,
@@ -93,7 +91,6 @@ create table if not exists public.staff_availability (
 
 create table if not exists public.service (
   id uuid primary key default gen_random_uuid(),
-  branch_id uuid not null references public.branch(id) on delete cascade,
   name text not null,
   duration_min integer not null check (duration_min > 0),
   price_base numeric(12,2) not null default 0,
@@ -102,10 +99,21 @@ create table if not exists public.service (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.branch_service (
+  id uuid primary key default gen_random_uuid(),
+  branch_id uuid not null references public.branch(id) on delete cascade,
+  service_id uuid not null references public.service(id) on delete cascade,
+  is_enabled boolean not null default true,
+  is_available boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (branch_id, service_id)
+);
+
 create table if not exists public.client (
   id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organization(id) on delete cascade,
-  branch_id uuid not null references public.branch(id) on delete restrict,
+  home_branch_id uuid references public.branch(id) on delete set null,
   full_name text,
   phone text not null,
   email text,
@@ -176,10 +184,11 @@ create table if not exists public.product (
 create table if not exists public.recipe (
   id uuid primary key default gen_random_uuid(),
   branch_id uuid not null references public.branch(id) on delete cascade,
-  service_id uuid not null unique references public.service(id) on delete cascade,
+  service_id uuid not null references public.service(id) on delete cascade,
   is_active boolean not null default true,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  unique (branch_id, service_id)
 );
 
 create table if not exists public.recipe_item (
