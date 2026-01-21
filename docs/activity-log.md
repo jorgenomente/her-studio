@@ -39,3 +39,17 @@ Se agregaron RPCs mínimas de escritura para reservas públicas, agenda, señas,
 - Habilita operaciones críticas del MVP con validaciones internas.
 - Mantiene RLS como capa principal; solo el RPC público usa SECURITY DEFINER.
 - No incluye lógica avanzada ni automatización de stock al recibir compras.
+
+## 2026-01-21 — App shell + Auth staff + branch context (base)
+
+**Tipo:** feature  
+**Alcance:** frontend
+
+**Resumen**
+Se agregó el shell interno con autenticación de staff, navegación por módulos y selector de sucursal.
+
+**Impacto**
+
+- Protege rutas /app con middleware.
+- Prepara permisos por rol y flags para ocultar acciones.
+- Entrega placeholders de módulos para el MVP.
