@@ -34,7 +34,7 @@ export default async function PurchaseDetailPage({
     );
   }
 
-  const supabase = (await createSupabaseServerClient()) as any;
+  const supabase = await createSupabaseServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

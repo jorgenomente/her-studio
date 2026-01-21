@@ -7,7 +7,7 @@ export async function fetchClientDetail({
   clientId: string;
   branchId: string;
 }) {
-  const supabase = (await createSupabaseServerClient()) as any;
+  const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase
     .from("v_app_client_detail")
@@ -30,7 +30,7 @@ export async function fetchClientAppointments({
   clientId: string;
   branchId: string;
 }) {
-  const supabase = (await createSupabaseServerClient()) as any;
+  const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase
     .from("v_app_client_appointments")
@@ -56,7 +56,7 @@ export async function fetchClientPayments({
   clientId: string;
   branchId: string;
 }) {
-  const supabase = (await createSupabaseServerClient()) as any;
+  const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase
     .from("v_app_client_payments")

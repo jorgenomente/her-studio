@@ -1,7 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function fetchPurchasesList({ branchId }: { branchId: string }) {
-  const supabase = (await createSupabaseServerClient()) as any;
+  const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase
     .from("v_app_purchases_list")
@@ -25,7 +25,7 @@ export async function fetchPurchaseDetail({
   branchId: string;
   purchaseId: string;
 }) {
-  const supabase = (await createSupabaseServerClient()) as any;
+  const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase
     .from("v_app_purchase_detail")

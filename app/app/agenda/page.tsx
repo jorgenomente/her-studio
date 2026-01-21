@@ -36,7 +36,7 @@ export default async function AgendaPage({
     );
   }
 
-  const supabase = (await createSupabaseServerClient()) as any;
+  const supabase = await createSupabaseServerClient();
   const { data: staffRows } = await supabase
     .from("staff")
     .select("id, full_name")

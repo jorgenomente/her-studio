@@ -52,7 +52,7 @@ export default async function PosPage({
     );
   }
 
-  const supabase = (await createSupabaseServerClient()) as any;
+  const supabase = await createSupabaseServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

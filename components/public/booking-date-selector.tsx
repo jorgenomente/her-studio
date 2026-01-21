@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -32,65 +32,56 @@ export function BookingDateSelector({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const initialStrategy = (() => {
+    const pref = searchParams.get("staff_strategy");
+    return pref === "explicit" || pref === "any" ? pref : "any";
+  })();
   const [date, setDate] = useState(() => {
     const today = new Date();
     return today.toISOString().slice(0, 10);
   });
-  const [staffStrategy, setStaffStrategy] = useState("any");
+  const [staffStrategy, setStaffStrategy] = useState(initialStrategy);
   const [staffId, setStaffId] = useState<string | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedStart, setSelectedStart] = useState<string | null>(null);
 
-  useEffect(() => {
-    const pref = searchParams.get("staff_strategy");
-    if (pref === "explicit" || pref === "any") {
-      setStaffStrategy(pref);
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
+  const fetchSlots = useCallback(async () => {
     if (!date) {
       return;
     }
-
     let isActive = true;
     setLoading(true);
     setError(null);
-
-    fetch(
-      `/api/public/availability?branch_id=${branchId}&service_id=${serviceId}&date=${date}`,
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        if (!isActive) return;
-        if (data.error) {
-          setError("No pudimos cargar disponibilidad.");
-          setSlots([]);
-          return;
-        }
-        setSlots(data.slots ?? []);
-      })
-      .catch(() => {
-        if (!isActive) return;
+    try {
+      const response = await fetch(
+        `/api/public/availability?branch_id=${branchId}&service_id=${serviceId}&date=${date}`,
+      );
+      const data = await response.json();
+      if (!isActive) return;
+      if (data.error) {
         setError("No pudimos cargar disponibilidad.");
         setSlots([]);
-      })
-      .finally(() => {
-        if (!isActive) return;
-        setLoading(false);
-        setSelectedStart(null);
-      });
-
+        return;
+      }
+      setSlots(data.slots ?? []);
+    } catch {
+      if (!isActive) return;
+      setError("No pudimos cargar disponibilidad.");
+      setSlots([]);
+    } finally {
+      if (!isActive) return;
+      setLoading(false);
+    }
     return () => {
       isActive = false;
     };
-  }, [branchId, serviceId, date]);
+  }, [branchId, date, serviceId]);
 
   useEffect(() => {
-    setSelectedStart(null);
-  }, [staffStrategy, staffId]);
+    void fetchSlots();
+  }, [fetchSlots]);
 
   const filteredSlots = useMemo(() => {
     if (staffStrategy === "explicit" && staffId) {
@@ -125,7 +116,10 @@ export function BookingDateSelector({
           type="date"
           value={date}
           min={new Date().toISOString().slice(0, 10)}
-          onChange={(event) => setDate(event.target.value)}
+          onChange={(event) => {
+            setDate(event.target.value);
+            setSelectedStart(null);
+          }}
         />
       </div>
 
@@ -138,6 +132,7 @@ export function BookingDateSelector({
               type="button"
               onClick={() => {
                 setStaffStrategy(option.value);
+                setSelectedStart(null);
                 if (option.value === "any") {
                   setStaffId(null);
                 }
@@ -159,7 +154,10 @@ export function BookingDateSelector({
               <button
                 key={member.staff_id}
                 type="button"
-                onClick={() => setStaffId(member.staff_id)}
+                onClick={() => {
+                  setStaffId(member.staff_id);
+                  setSelectedStart(null);
+                }}
                 className={cn(
                   "rounded-2xl border px-4 py-3 text-left text-sm",
                   staffId === member.staff_id
