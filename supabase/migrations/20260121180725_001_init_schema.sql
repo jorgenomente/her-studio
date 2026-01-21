@@ -1,4 +1,4 @@
-create extension if not exists \"pgcrypto\";
+create extension if not exists pgcrypto;
 
 -- Core enums
 create type public.user_role as enum ('superadmin', 'admin', 'seller');
