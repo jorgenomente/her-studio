@@ -163,3 +163,16 @@ Se implementó el módulo de compras con creación, recepción y actualización 
 - Permite crear compras y recibirlas desde la UI.
 - Genera movimientos de stock al recibir.
 - Respeta permisos de stock y contexto de sucursal.
+
+## 2026-01-21 — Reportes: views base para dashboard y métricas
+
+**Tipo:** feature  
+**Alcance:** db
+
+**Resumen**
+Se agregaron views base para dashboard global y reportes de ingresos/marketing.
+
+**Impacto**
+
+- Habilita reportes por período y breakdowns básicos.
+- Permite vista global para superadmin.
