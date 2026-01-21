@@ -136,3 +136,16 @@ Se implementó el módulo de stock con snapshot por sucursal y carga de movimien
 - Permite consultar niveles actuales y detectar bajos.
 - Registra movimientos manuales con tipo y motivo.
 - Respeta permisos de stock y contexto de sucursal.
+
+## 2026-01-21 — Compras: recepción genera stock movements
+
+**Tipo:** feature  
+**Alcance:** db
+
+**Resumen**
+Se actualizó rpc_receive_purchase para crear movimientos de stock al recibir compras.
+
+**Impacto**
+
+- Cierra el ciclo de stock automáticamente al recibir compras.
+- Evita duplicar movimientos si ya fue recibida.
