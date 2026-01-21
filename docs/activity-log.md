@@ -202,3 +202,16 @@ Se agregaron views y RPCs para configurar staff, disponibilidad, servicios por s
 
 - Habilita gestión operativa sin intervención técnica.
 - Incluye flujo de invitaciones con token.
+
+## 2026-01-21 — Configuración MVP (staff, servicios por sucursal, usuarios/invites) implementado
+
+**Tipo:** feature  
+**Alcance:** frontend
+
+**Resumen**
+Se implementó el módulo de configuración con staff, servicios y usuarios/invitaciones.
+
+**Impacto**
+
+- Admin/superadmin pueden operar configuración sin devs.
+- Incluye flujo de invitación con link y aceptación pública.
