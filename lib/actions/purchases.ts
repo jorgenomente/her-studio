@@ -12,7 +12,7 @@ type PurchaseItemInput = {
 };
 
 export async function createPurchaseAction(formData: FormData) {
-  const branchId = cookies().get("hs_branch_id")?.value ?? null;
+  const branchId = (await cookies()).get("hs_branch_id")?.value ?? null;
   if (!branchId) {
     redirect("/app/compras?error=Selecciona_sucursal");
   }
@@ -33,11 +33,11 @@ export async function createPurchaseAction(formData: FormData) {
     redirect("/app/compras?error=Items_invalidos");
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("rpc_create_purchase", {
     p_branch_id: branchId,
     p_items: items,
-    p_notes: null,
+    p_notes: undefined,
   });
 
   if (error) {
@@ -53,7 +53,7 @@ type ReceiveItemInput = {
 };
 
 export async function receivePurchaseAction(formData: FormData) {
-  const branchId = cookies().get("hs_branch_id")?.value ?? null;
+  const branchId = (await cookies()).get("hs_branch_id")?.value ?? null;
   const purchaseId = formData.get("purchase_id")?.toString();
 
   if (!branchId || !purchaseId) {
@@ -79,7 +79,7 @@ export async function receivePurchaseAction(formData: FormData) {
     redirect(`/app/compras/${purchaseId}?error=Debes_recibir_al_menos_un_item`);
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("rpc_receive_purchase", {
     p_branch_id: branchId,
     p_purchase_id: purchaseId,

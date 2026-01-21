@@ -23,7 +23,7 @@ export default async function PurchaseDetailPage({
   searchParams,
 }: PageProps) {
   const { purchaseId } = params;
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const activeBranchId = cookieStore.get("hs_branch_id")?.value ?? null;
 
   if (!activeBranchId) {
@@ -34,7 +34,7 @@ export default async function PurchaseDetailPage({
     );
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -87,9 +87,21 @@ export default async function PurchaseDetailPage({
     );
   }
 
-  const header = detail[0];
+  const typedDetail = detail as {
+    purchase_id: string;
+    branch_id: string;
+    status: string;
+    ordered_at: string;
+    received_at?: string | null;
+    product_id: string;
+    product_name: string;
+    quantity_ordered: number;
+    quantity_received: number | null;
+  }[];
 
-  const items = detail.map((row) => ({
+  const header = typedDetail[0];
+
+  const items = typedDetail.map((row) => ({
     product_id: row.product_id,
     product_name: row.product_name,
     quantity_ordered: row.quantity_ordered,

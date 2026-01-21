@@ -4,9 +4,14 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { Database, Json } from "@/types/supabase";
+
+type UserRole = Database["public"]["Enums"]["user_role"];
+
+const allowedAssignableRoles: UserRole[] = ["admin", "seller"];
 
 export async function createStaffAction(formData: FormData) {
-  const branchId = cookies().get("hs_branch_id")?.value ?? null;
+  const branchId = (await cookies()).get("hs_branch_id")?.value ?? null;
   const fullName = formData.get("full_name")?.toString();
   const email = formData.get("email")?.toString() ?? null;
   const phone = formData.get("phone")?.toString() ?? null;
@@ -15,7 +20,7 @@ export async function createStaffAction(formData: FormData) {
     redirect("/app/configuracion?error=Datos_incompletos");
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("rpc_create_staff", {
     p_branch_id: branchId,
     p_full_name: fullName,
@@ -31,7 +36,7 @@ export async function createStaffAction(formData: FormData) {
 }
 
 export async function updateStaffAction(formData: FormData) {
-  const branchId = cookies().get("hs_branch_id")?.value ?? null;
+  const branchId = (await cookies()).get("hs_branch_id")?.value ?? null;
   const staffId = formData.get("staff_id")?.toString();
   const fullName = formData.get("full_name")?.toString() ?? null;
   const email = formData.get("email")?.toString() ?? null;
@@ -42,7 +47,7 @@ export async function updateStaffAction(formData: FormData) {
     redirect("/app/configuracion?error=Datos_incompletos");
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("rpc_update_staff", {
     p_staff_id: staffId,
     p_branch_id: branchId,
@@ -60,7 +65,7 @@ export async function updateStaffAction(formData: FormData) {
 }
 
 export async function setStaffAvailabilityAction(formData: FormData) {
-  const branchId = cookies().get("hs_branch_id")?.value ?? null;
+  const branchId = (await cookies()).get("hs_branch_id")?.value ?? null;
   const staffId = formData.get("staff_id")?.toString();
   const availabilityRaw = formData.get("availability")?.toString();
 
@@ -68,14 +73,14 @@ export async function setStaffAvailabilityAction(formData: FormData) {
     redirect("/app/configuracion?error=Datos_incompletos");
   }
 
-  let availability: unknown = null;
+  let availability: Json | null = null;
   try {
-    availability = JSON.parse(availabilityRaw);
+    availability = JSON.parse(availabilityRaw) as Json;
   } catch {
     redirect("/app/configuracion?error=Disponibilidad_invalida");
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("rpc_set_staff_availability", {
     p_staff_id: staffId,
     p_branch_id: branchId,
@@ -90,7 +95,7 @@ export async function setStaffAvailabilityAction(formData: FormData) {
 }
 
 export async function setBranchServiceStateAction(formData: FormData) {
-  const branchId = cookies().get("hs_branch_id")?.value ?? null;
+  const branchId = (await cookies()).get("hs_branch_id")?.value ?? null;
   const serviceId = formData.get("service_id")?.toString();
   const isEnabled = formData.get("is_enabled") === "on";
   const isAvailable = formData.get("is_available") === "on";
@@ -99,7 +104,7 @@ export async function setBranchServiceStateAction(formData: FormData) {
     redirect("/app/configuracion?error=Datos_incompletos");
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("rpc_set_branch_service_state", {
     p_branch_id: branchId,
     p_service_id: serviceId,
@@ -123,16 +128,20 @@ export async function createInviteAction(formData: FormData) {
   const canManagePayments = formData.get("can_manage_payments") === "on";
   const canManageStock = formData.get("can_manage_stock") === "on";
 
-  if (!branchId || !email) {
+  if (
+    !branchId ||
+    !email ||
+    !allowedAssignableRoles.includes(role as UserRole)
+  ) {
     redirect("/app/configuracion?error=Datos_incompletos");
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.rpc("rpc_create_invite", {
     p_branch_id: branchId,
     p_email: email,
     p_full_name: fullName,
-    p_role: role,
+    p_role: role as UserRole,
     p_can_manage_agenda: canManageAgenda,
     p_can_manage_payments: canManagePayments,
     p_can_manage_stock: canManageStock,
@@ -163,11 +172,15 @@ export async function updateUserBranchRoleAction(formData: FormData) {
     redirect("/app/configuracion?error=Datos_incompletos");
   }
 
-  const supabase = createSupabaseServerClient();
+  if (!allowedAssignableRoles.includes(role as UserRole)) {
+    redirect("/app/configuracion?error=Rol_invalido");
+  }
+
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("rpc_update_user_branch_role", {
     p_user_id: userId,
     p_branch_id: branchId,
-    p_role: role,
+    p_role: role as UserRole,
     p_can_manage_agenda: canManageAgenda,
     p_can_manage_payments: canManagePayments,
     p_can_manage_stock: canManageStock,

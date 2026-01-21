@@ -7,7 +7,7 @@ export async function fetchAppointmentDetail({
   appointmentId: string;
   branchId: string;
 }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
 
   const { data, error } = await supabase
     .from("v_app_appointment_detail")

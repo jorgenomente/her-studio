@@ -13,7 +13,7 @@ export async function fetchAgendaDay({
   staffId,
   status,
 }: AgendaFilters) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
 
   // TODO: Use branch timezone when available. For now, filter by UTC date.
   const startAt = new Date(`${date}T00:00:00.000Z`);

@@ -25,7 +25,7 @@ export default async function AgendaPage({
   const staffId = params.staff ?? null;
   const status = params.status ?? null;
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const activeBranchId = cookieStore.get("hs_branch_id")?.value ?? null;
 
   if (!activeBranchId) {
@@ -36,13 +36,15 @@ export default async function AgendaPage({
     );
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const { data: staffRows } = await supabase
     .from("staff")
     .select("id, full_name")
     .eq("branch_id", activeBranchId)
     .eq("status", "active")
     .order("full_name", { ascending: true });
+
+  const typedStaffRows = (staffRows ?? []) as { id: string; full_name: string }[];
 
   let appointments: Awaited<ReturnType<typeof fetchAgendaDay>> = [];
   let error: string | null = null;
@@ -58,12 +60,25 @@ export default async function AgendaPage({
     error = err instanceof Error ? err.message : "Error cargando la agenda.";
   }
 
+  const typedAppointments = appointments as {
+    appointment_id: string;
+    start_at: string;
+    end_at: string;
+    status: string;
+    staff_name: string;
+    service_name: string;
+    client_name?: string | null;
+    client_phone?: string | null;
+    has_deposit: boolean;
+    has_payment: boolean;
+  }[];
+
   return (
     <div className="space-y-6">
       <AgendaHeader date={new Date(`${dateValue}T00:00:00`)} />
 
       <AgendaFilters
-        staffOptions={(staffRows ?? []).map((staff) => ({
+        staffOptions={typedStaffRows.map((staff) => ({
           id: staff.id,
           name: staff.full_name,
         }))}
@@ -87,7 +102,7 @@ export default async function AgendaPage({
       ) : null}
 
       <div className="space-y-3">
-        {appointments.map((appointment) => (
+        {typedAppointments.map((appointment) => (
           <AppointmentCard
             key={appointment.appointment_id}
             appointmentId={appointment.appointment_id}

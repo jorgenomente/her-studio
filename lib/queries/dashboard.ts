@@ -1,7 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function fetchDashboardDay({ branchId }: { branchId: string }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const { data, error } = await supabase
     .from("v_app_dashboard_day")
     .select(
@@ -18,7 +18,7 @@ export async function fetchDashboardDay({ branchId }: { branchId: string }) {
 }
 
 export async function fetchDashboardGlobalDay() {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const { data, error } = await supabase
     .from("v_app_dashboard_global_day")
     .select(

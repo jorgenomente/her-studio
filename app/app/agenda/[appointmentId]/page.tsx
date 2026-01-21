@@ -9,6 +9,7 @@ import { AppointmentPaymentCard } from "@/components/app/appointment/appointment
 import { AppointmentServiceCard } from "@/components/app/appointment/appointment-service-card";
 import { fetchAppointmentDetail } from "@/lib/queries/appointment";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { Database } from "@/types/supabase";
 
 type PageProps = {
   params: { appointmentId: string };
@@ -23,12 +24,31 @@ type BranchRole = {
   is_active: boolean;
 };
 
+type AppointmentStatus = Database["public"]["Enums"]["appointment_status"];
+type DepositStatus = Database["public"]["Enums"]["deposit_status"];
+
+const allowedAppointmentStatuses: AppointmentStatus[] = [
+  "scheduled",
+  "scheduled_deposit_pending",
+  "scheduled_deposit_verified",
+  "in_progress",
+  "completed",
+  "cancelled",
+  "no_show",
+];
+
+const allowedDepositStatuses: DepositStatus[] = [
+  "pending",
+  "verified",
+  "rejected",
+];
+
 export default async function AppointmentDetailPage({
   params,
   searchParams,
 }: PageProps) {
   const { appointmentId } = params;
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const activeBranchId = cookieStore.get("hs_branch_id")?.value ?? null;
 
   if (!activeBranchId) {
@@ -39,7 +59,7 @@ export default async function AppointmentDetailPage({
     );
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -88,15 +108,20 @@ export default async function AppointmentDetailPage({
     const branchIdValue = formData.get("branch_id")?.toString();
     const statusValue = formData.get("status")?.toString();
 
-    if (!appointmentIdValue || !branchIdValue || !statusValue) {
+    if (
+      !appointmentIdValue ||
+      !branchIdValue ||
+      !statusValue ||
+      !allowedAppointmentStatuses.includes(statusValue as AppointmentStatus)
+    ) {
       return;
     }
 
-    const supabaseServer = createSupabaseServerClient();
+    const supabaseServer = await createSupabaseServerClient();
     await supabaseServer.rpc("rpc_update_appointment_status", {
       p_appointment_id: appointmentIdValue,
       p_branch_id: branchIdValue,
-      p_new_status: statusValue,
+      p_new_status: statusValue as AppointmentStatus,
     });
     redirect(`/app/agenda/${appointmentIdValue}?success=estado_actualizado`);
   }
@@ -106,18 +131,18 @@ export default async function AppointmentDetailPage({
     const appointmentIdValue = formData.get("appointment_id")?.toString();
     const branchIdValue = formData.get("branch_id")?.toString();
     const amountValue = Number(formData.get("amount"));
-    const proofUrlValue = formData.get("proof_url")?.toString() ?? null;
+    const proofUrlValue = formData.get("proof_url")?.toString();
 
     if (!appointmentIdValue || !branchIdValue || Number.isNaN(amountValue)) {
       return;
     }
 
-    const supabaseServer = createSupabaseServerClient();
+    const supabaseServer = await createSupabaseServerClient();
     await supabaseServer.rpc("rpc_create_or_update_deposit", {
       p_appointment_id: appointmentIdValue,
       p_branch_id: branchIdValue,
       p_amount: amountValue,
-      p_proof_url: proofUrlValue,
+      p_proof_url: proofUrlValue ?? undefined,
     });
     redirect(`/app/agenda/${appointmentIdValue}?success=senia_guardada`);
   }
@@ -128,15 +153,20 @@ export default async function AppointmentDetailPage({
     const branchIdValue = formData.get("branch_id")?.toString();
     const statusValue = formData.get("status")?.toString();
 
-    if (!depositIdValue || !branchIdValue || !statusValue) {
+    if (
+      !depositIdValue ||
+      !branchIdValue ||
+      !statusValue ||
+      !allowedDepositStatuses.includes(statusValue as DepositStatus)
+    ) {
       return;
     }
 
-    const supabaseServer = createSupabaseServerClient();
+    const supabaseServer = await createSupabaseServerClient();
     await supabaseServer.rpc("rpc_verify_deposit", {
       p_deposit_id: depositIdValue,
       p_branch_id: branchIdValue,
-      p_status: statusValue,
+      p_status: statusValue as DepositStatus,
     });
     const appointmentIdValue = formData.get("appointment_id")?.toString();
     if (appointmentIdValue) {

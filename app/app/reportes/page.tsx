@@ -72,7 +72,7 @@ export default async function ReportesPage({
 }: {
   searchParams: SearchParams;
 }) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const activeBranchId = cookieStore.get("hs_branch_id")?.value ?? null;
 
   if (!activeBranchId) {
@@ -83,7 +83,7 @@ export default async function ReportesPage({
     );
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -112,15 +112,20 @@ export default async function ReportesPage({
 
   const { range, preset } = resolveRange(searchParams);
 
-  const [byMethod, bySource, recurrentSplit, topServices] = await Promise.all([
+  const [byMethod, bySource, recurrentSplit, topServices] = (await Promise.all([
     fetchIncomeByMethod({ branchId: activeBranchId, range }),
     fetchIncomeBySource({ branchId: activeBranchId, range }),
     fetchIncomeRecurrentSplit({ branchId: activeBranchId, range }),
     fetchTopServices({ branchId: activeBranchId, range }),
-  ]);
+  ])) as [
+    { method: string; total_amount: number; count: number }[],
+    { source: string | null; total_amount: number; count: number }[],
+    { is_recurrent: boolean | null; total_amount: number; count: number }[],
+    { service_id: string; service_name: string; total_amount: number; count: number }[],
+  ];
 
   const totalIncome = byMethod.reduce(
-    (sum, row) => sum + (row.total_amount ?? 0),
+    (sum: number, row) => sum + (row.total_amount ?? 0),
     0,
   );
 

@@ -5,7 +5,7 @@ export async function fetchUnpaidAppointments({
 }: {
   branchId: string;
 }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
 
   const { data, error } = await supabase
     .from("v_app_pos_unpaid_appointments")
@@ -23,7 +23,7 @@ export async function fetchUnpaidAppointments({
 }
 
 export async function fetchPaymentsDay({ branchId }: { branchId: string }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
 
   const { data, error } = await supabase
     .from("v_app_pos_payments_day")

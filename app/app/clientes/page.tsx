@@ -13,7 +13,7 @@ export default async function ClientesPage({
 }: {
   searchParams: SearchParams;
 }) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const activeBranchId = cookieStore.get("hs_branch_id")?.value ?? null;
   const query = searchParams.q?.trim() ?? "";
 
@@ -34,6 +34,15 @@ export default async function ClientesPage({
     error = err instanceof Error ? err.message : "Error cargando clientes.";
   }
 
+  const typedClients = clients as {
+    client_id: string;
+    full_name?: string | null;
+    phone: string;
+    last_visit_at?: string | null;
+    visits_count: number;
+    total_spent: number;
+  }[];
+
   return (
     <div className="space-y-4">
       <ClientsSearch initialQuery={query} />
@@ -51,7 +60,7 @@ export default async function ClientesPage({
       ) : null}
 
       <div className="space-y-3">
-        {clients.map((client) => (
+        {typedClients.map((client) => (
           <ClientCard
             key={client.client_id}
             clientId={client.client_id}

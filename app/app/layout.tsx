@@ -76,7 +76,7 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -113,7 +113,7 @@ export default async function AppLayout({
     branches = (data ?? []) as Branch[];
   }
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const cookieBranchId = cookieStore.get("hs_branch_id")?.value ?? null;
   const hasBranch =
     cookieBranchId && branches.some((branch) => branch.id === cookieBranchId);
@@ -163,7 +163,8 @@ export default async function AppLayout({
     if (!branchId) {
       return;
     }
-    cookies().set("hs_branch_id", branchId, {
+    const cookieStore = await cookies();
+    cookieStore.set("hs_branch_id", branchId, {
       path: "/",
       httpOnly: true,
       sameSite: "lax",

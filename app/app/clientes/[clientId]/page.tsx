@@ -15,7 +15,7 @@ type PageProps = {
 
 export default async function ClientDetailPage({ params }: PageProps) {
   const { clientId } = params;
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const activeBranchId = cookieStore.get("hs_branch_id")?.value ?? null;
 
   if (!activeBranchId) {
@@ -66,8 +66,26 @@ export default async function ClientDetailPage({ params }: PageProps) {
     ? format(new Date(client.last_visit_at), "dd/MM/yyyy")
     : "—";
 
-  const sourceCounts = payments.reduce<Record<string, number>>(
-    (acc, payment) => {
+  const typedPayments = payments as {
+    source?: string | null;
+    referred_by?: string | null;
+    appointment_id?: string | null;
+    payment_id: string;
+    amount: number;
+    method: string;
+    paid_at: string;
+  }[];
+
+  const typedAppointments = appointments as {
+    appointment_id: string;
+    start_at: string;
+    service_name: string;
+    staff_name: string;
+    status: string;
+  }[];
+
+  const sourceCounts = typedPayments.reduce(
+    (acc: Record<string, number>, payment) => {
       if (payment.source) {
         acc[payment.source] = (acc[payment.source] ?? 0) + 1;
       }
@@ -79,8 +97,8 @@ export default async function ClientDetailPage({ params }: PageProps) {
   const topSource =
     Object.entries(sourceCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "—";
 
-  const referredCounts = payments.reduce<Record<string, number>>(
-    (acc, payment) => {
+  const referredCounts = typedPayments.reduce(
+    (acc: Record<string, number>, payment) => {
       if (payment.referred_by) {
         acc[payment.referred_by] = (acc[payment.referred_by] ?? 0) + 1;
       }
@@ -134,7 +152,7 @@ export default async function ClientDetailPage({ params }: PageProps) {
           </p>
         ) : (
           <div className="space-y-3">
-            {appointments.map((appointment) => (
+            {typedAppointments.map((appointment) => (
               <div
                 key={appointment.appointment_id}
                 className="flex items-center justify-between gap-3"
@@ -165,7 +183,7 @@ export default async function ClientDetailPage({ params }: PageProps) {
           </p>
         ) : (
           <div className="space-y-3">
-            {payments.map((payment) => (
+            {typedPayments.map((payment) => (
               <div
                 key={payment.payment_id}
                 className="flex items-center justify-between gap-3"

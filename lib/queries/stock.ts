@@ -7,7 +7,7 @@ export async function fetchStockSnapshot({
   branchId: string;
   query?: string | null;
 }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
 
   let request = supabase
     .from("v_app_stock_snapshot")

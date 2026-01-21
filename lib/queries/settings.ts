@@ -1,7 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function fetchStaffList({ branchId }: { branchId: string }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const { data, error } = await supabase
     .from("v_app_staff_list")
     .select("staff_id,branch_id,full_name,email,phone,status")
@@ -20,7 +20,7 @@ export async function fetchStaffAvailability({
 }: {
   branchId: string;
 }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const { data, error } = await supabase
     .from("v_app_staff_availability")
     .select("staff_id,weekday,start_time,end_time,is_active")
@@ -34,7 +34,7 @@ export async function fetchStaffAvailability({
 }
 
 export async function fetchBranchServices({ branchId }: { branchId: string }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const { data, error } = await supabase
     .from("v_app_branch_services")
     .select(
@@ -51,7 +51,7 @@ export async function fetchBranchServices({ branchId }: { branchId: string }) {
 }
 
 export async function fetchUsersList({ branchIds }: { branchIds: string[] }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const { data, error } = await supabase
     .from("v_app_users_list")
     .select(
@@ -68,7 +68,7 @@ export async function fetchUsersList({ branchIds }: { branchIds: string[] }) {
 }
 
 export async function fetchBranches() {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const { data, error } = await supabase
     .from("branch")
     .select("id,name,status")

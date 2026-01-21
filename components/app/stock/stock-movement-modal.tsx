@@ -45,12 +45,6 @@ export function StockMovementModal({
 
   const productOptions = useMemo(() => products, [products]);
 
-  useEffect(() => {
-    if (open) {
-      setProductId(initialProductId ?? "");
-    }
-  }, [open, initialProductId]);
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">

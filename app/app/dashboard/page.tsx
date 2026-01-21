@@ -24,7 +24,7 @@ export default async function DashboardPage({
 }: {
   searchParams: SearchParams;
 }) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const activeBranchId = cookieStore.get("hs_branch_id")?.value ?? null;
 
   if (!activeBranchId) {
@@ -35,7 +35,7 @@ export default async function DashboardPage({
     );
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const {
     data: { user },
   } = await supabase.auth.getUser();

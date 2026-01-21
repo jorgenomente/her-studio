@@ -12,7 +12,7 @@ export async function fetchIncomeByMethod({
   branchId: string;
   range: DateRange;
 }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const { data, error } = await supabase
     .from("v_app_reports_income_by_method")
     .select("branch_id,paid_date,method,total_amount,count")
@@ -34,7 +34,7 @@ export async function fetchIncomeBySource({
   branchId: string;
   range: DateRange;
 }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const { data, error } = await supabase
     .from("v_app_reports_income_by_source")
     .select("branch_id,paid_date,source,total_amount,count")
@@ -56,7 +56,7 @@ export async function fetchIncomeRecurrentSplit({
   branchId: string;
   range: DateRange;
 }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const { data, error } = await supabase
     .from("v_app_reports_income_recurrent_split")
     .select("branch_id,paid_date,is_recurrent,total_amount,count")
@@ -78,7 +78,7 @@ export async function fetchTopServices({
   branchId: string;
   range: DateRange;
 }) {
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const { data, error } = await supabase
     .from("v_app_reports_top_services")
     .select("branch_id,paid_date,service_id,service_name,total_amount,count")

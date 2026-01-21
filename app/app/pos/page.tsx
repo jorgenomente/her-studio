@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { PosClient } from "@/components/app/pos/pos-client";
 import { fetchPaymentsDay, fetchUnpaidAppointments } from "@/lib/queries/pos";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { Database } from "@/types/supabase";
 
 type SearchParams = {
   success?: string;
@@ -17,12 +18,30 @@ type BranchRole = {
   is_active: boolean;
 };
 
+type PaymentMethod = Database["public"]["Enums"]["payment_method"];
+type PaymentSourceType = Database["public"]["Enums"]["payment_source_type"];
+
+const allowedPaymentMethods: PaymentMethod[] = [
+  "cash",
+  "transfer",
+  "card",
+  "other",
+];
+
+const allowedPaymentSources: PaymentSourceType[] = [
+  "recommendation",
+  "instagram",
+  "google_maps",
+  "walk_in",
+  "other",
+];
+
 export default async function PosPage({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const activeBranchId = cookieStore.get("hs_branch_id")?.value ?? null;
 
   if (!activeBranchId) {
@@ -33,7 +52,7 @@ export default async function PosPage({
     );
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -79,26 +98,34 @@ export default async function PosPage({
     const amount = Number(formData.get("amount"));
     const method = formData.get("method")?.toString();
     const source = formData.get("source")?.toString();
-    const referredBy = formData.get("referred_by")?.toString() ?? null;
-    const clientId = formData.get("client_id")?.toString() ?? null;
+    const referredBy = formData.get("referred_by")?.toString();
+    const clientId = formData.get("client_id")?.toString();
     const isRecurrent = formData.get("is_recurrent") === "on";
 
-    if (!appointmentId || Number.isNaN(amount) || !method || !source) {
+    if (
+      !activeBranchId ||
+      !appointmentId ||
+      Number.isNaN(amount) ||
+      !method ||
+      !source ||
+      !allowedPaymentMethods.includes(method as PaymentMethod) ||
+      !allowedPaymentSources.includes(source as PaymentSourceType)
+    ) {
       redirect("/app/pos?error=Datos_incompletos");
     }
 
-    const supabaseServer = createSupabaseServerClient();
+    const supabaseServer = await createSupabaseServerClient();
     const { error: payError } = await supabaseServer.rpc(
       "rpc_create_payment_for_appointment",
       {
         p_branch_id: activeBranchId,
         p_appointment_id: appointmentId,
         p_amount: amount,
-        p_method: method,
-        p_source: source,
+        p_method: method as PaymentMethod,
+        p_source: source as PaymentSourceType,
         p_is_recurrent: isRecurrent,
-        p_client_id: clientId || null,
-        p_referred_by: referredBy,
+        p_client_id: clientId ?? undefined,
+        p_referred_by: referredBy ?? undefined,
       },
     );
 
@@ -114,29 +141,36 @@ export default async function PosPage({
     const amount = Number(formData.get("amount"));
     const method = formData.get("method")?.toString();
     const source = formData.get("source")?.toString();
-    const referredBy = formData.get("referred_by")?.toString() ?? null;
+    const referredBy = formData.get("referred_by")?.toString();
     const isRecurrent = formData.get("is_recurrent") === "on";
-    const clientPhone = formData.get("client_phone")?.toString() ?? null;
-    const clientFullName = formData.get("client_full_name")?.toString() ?? null;
-    const clientEmail = formData.get("client_email")?.toString() ?? null;
+    const clientPhone = formData.get("client_phone")?.toString();
+    const clientFullName = formData.get("client_full_name")?.toString();
+    const clientEmail = formData.get("client_email")?.toString();
 
-    if (Number.isNaN(amount) || !method || !source) {
+    if (
+      !activeBranchId ||
+      Number.isNaN(amount) ||
+      !method ||
+      !source ||
+      !allowedPaymentMethods.includes(method as PaymentMethod) ||
+      !allowedPaymentSources.includes(source as PaymentSourceType)
+    ) {
       redirect("/app/pos?error=Datos_incompletos");
     }
 
-    const supabaseServer = createSupabaseServerClient();
+    const supabaseServer = await createSupabaseServerClient();
     const { error: walkinError } = await supabaseServer.rpc(
       "rpc_create_walkin_payment",
       {
         p_branch_id: activeBranchId,
         p_amount: amount,
-        p_method: method,
-        p_source: source,
+        p_method: method as PaymentMethod,
+        p_source: source as PaymentSourceType,
         p_is_recurrent: isRecurrent,
-        p_client_phone: clientPhone,
-        p_client_full_name: clientFullName,
-        p_client_email: clientEmail,
-        p_referred_by: referredBy,
+        p_client_phone: clientPhone ?? undefined,
+        p_client_full_name: clientFullName ?? undefined,
+        p_client_email: clientEmail ?? undefined,
+        p_referred_by: referredBy ?? undefined,
       },
     );
 

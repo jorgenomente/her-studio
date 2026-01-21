@@ -25,7 +25,7 @@ export default async function StockPage({
 }: {
   searchParams: SearchParams;
 }) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const activeBranchId = cookieStore.get("hs_branch_id")?.value ?? null;
   const query = searchParams.q?.trim() ?? "";
 
@@ -37,7 +37,7 @@ export default async function StockPage({
     );
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const {
     data: { user },
   } = await supabase.auth.getUser();

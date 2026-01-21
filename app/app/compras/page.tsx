@@ -25,7 +25,7 @@ export default async function ComprasPage({
 }: {
   searchParams: SearchParams;
 }) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const activeBranchId = cookieStore.get("hs_branch_id")?.value ?? null;
 
   if (!activeBranchId) {
@@ -36,7 +36,7 @@ export default async function ComprasPage({
     );
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = (await createSupabaseServerClient()) as any;
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -67,6 +67,7 @@ export default async function ComprasPage({
     .eq("branch_id", activeBranchId)
     .eq("is_active", true)
     .order("name", { ascending: true });
+  const typedProducts = (products ?? []) as { id: string; name: string }[];
 
   let purchases = [];
   let error: string | null = null;
@@ -94,7 +95,7 @@ export default async function ComprasPage({
         <NewPurchaseModal
           open={false}
           onOpenChange={() => {}}
-          products={(products ?? []).map((product) => ({
+          products={typedProducts.map((product) => ({
             id: product.id,
             name: product.name,
           }))}
