@@ -81,3 +81,17 @@ Se implementó el detalle de cita con lectura completa y acciones de estado/señ
 - Permite operar cambios de estado básicos sin cobro.
 - Habilita registro y verificación de señas para staff autorizado.
 - Mantiene UI mobile-first con estados completos.
+
+## 2026-01-21 — POS MVP (cobros + venta sin cita) implementado
+
+**Tipo:** feature  
+**Alcance:** frontend
+
+**Resumen**
+Se agregó la pantalla POS con cobro de citas, venta sin cita y lista de pagos del día.
+
+**Impacto**
+
+- Permite registrar cobros con método y analytics básicos.
+- Respeta permisos de pagos y contexto de sucursal.
+- No incluye procesamiento de pagos online ni stock automático.
