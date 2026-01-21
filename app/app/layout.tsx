@@ -135,6 +135,10 @@ export default async function AppLayout({
   const showBranchSelector = isSuperadmin || branches.length > 1;
 
   const navItems = [
+    (permissions.role === "admin" || permissions.role === "superadmin") && {
+      href: "/app/dashboard",
+      label: "Dashboard",
+    },
     permissions.canManageAgenda && { href: "/app/agenda", label: "Agenda" },
     permissions.canManagePayments && { href: "/app/pos", label: "POS" },
     (permissions.canManageAgenda || permissions.canManagePayments) && {

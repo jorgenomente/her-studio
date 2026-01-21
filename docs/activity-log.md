@@ -176,3 +176,16 @@ Se agregaron views base para dashboard global y reportes de ingresos/marketing.
 
 - Habilita reportes por período y breakdowns básicos.
 - Permite vista global para superadmin.
+
+## 2026-01-21 — Dashboard + Reportes MVP implementado
+
+**Tipo:** feature  
+**Alcance:** frontend
+
+**Resumen**
+Se implementaron Dashboard y Reportes con lecturas por rango y breakdowns básicos.
+
+**Impacto**
+
+- Permite seguimiento diario y análisis por método/fuente/recurrente.
+- Incluye toggle global para superadmin.
