@@ -727,3 +727,10 @@ using (
       and public.has_permission(p.branch_id, 'payments')
   )
 );
+
+-- Smoke checks (manual)
+-- 1) As superadmin: SELECT * FROM branch; INSERT/UPDATE/DELETE on service should succeed.
+-- 2) As admin for branch X: SELECT * FROM appointment WHERE branch_id = X; INSERT appointment in X should succeed.
+-- 3) As seller without can_manage_payments: INSERT into payment for branch X should fail.
+-- 4) As seller with can_manage_stock: INSERT into stock_movement for branch X should succeed.
+-- 5) As any role without access to branch Y: SELECT * FROM product WHERE branch_id = Y should return 0 rows.
