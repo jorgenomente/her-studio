@@ -67,3 +67,17 @@ Se implementó la pantalla de agenda con lectura desde `v_app_agenda_day`, filtr
 - Permite visualizar citas por día con estados y señales (seña/pago).
 - Respeta RLS y el contexto de sucursal activo.
 - Aún no incluye acciones de escritura.
+
+## 2026-01-21 — Detalle de cita MVP (lectura + acciones básicas)
+
+**Tipo:** feature  
+**Alcance:** frontend
+
+**Resumen**
+Se implementó el detalle de cita con lectura completa y acciones de estado/seña según permisos.
+
+**Impacto**
+
+- Permite operar cambios de estado básicos sin cobro.
+- Habilita registro y verificación de señas para staff autorizado.
+- Mantiene UI mobile-first con estados completos.
