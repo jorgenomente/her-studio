@@ -1,64 +1,147 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Playfair_Display } from "next/font/google";
+
+import { Button } from "@/components/ui/button";
+
+const display = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-display",
+});
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#ffe1e8,_transparent_45%),radial-gradient(circle_at_top_right,_#fff0d2,_transparent_45%),linear-gradient(180deg,_#fff6f2,_#ffffff_45%)]">
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
+        <span className="text-lg font-semibold tracking-tight">Her Studio</span>
+        <div className="flex items-center gap-3">
+          <Button asChild variant="ghost">
+            <Link href="/login">Ingresar</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/reservar">Reservar</Link>
+          </Button>
+        </div>
+      </header>
+
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 pb-16 pt-4 lg:flex-row lg:items-start">
+        <section className="flex-1 space-y-8">
+          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            Beauty studio experience
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <h1
+            className={`${display.variable} text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl`}
+            style={{ fontFamily: "var(--font-display)" }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            La belleza que se siente desde la primera reserva.
+          </h1>
+          <p className="max-w-xl text-base text-muted-foreground sm:text-lg">
+            Her Studio es una experiencia integral: agenda ágil, equipo experto y
+            resultados impecables. Reservá en minutos, elegí tu sucursal y
+            confirmá tu turno sin complicaciones.
+          </p>
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <Button asChild size="lg" className="w-full sm:w-auto">
+              <Link href="/reservar">Reservar ahora</Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="w-full border-black/10 bg-white/80 sm:w-auto"
+            >
+              <Link href="#servicios">Ver servicios</Link>
+            </Button>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {[
+              {
+                title: "Equipo especializado",
+                description:
+                  "Profesionales certificados en color, corte y tratamientos.",
+              },
+              {
+                title: "Agenda inteligente",
+                description:
+                  "Disponibilidad real por sucursal y profesionales.",
+              },
+              {
+                title: "Experiencia premium",
+                description:
+                  "Atención personalizada y espacios pensados para vos.",
+              },
+              {
+                title: "Seña opcional",
+                description:
+                  "Reservá con comprobante y confirmamos manualmente.",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="rounded-3xl border border-black/5 bg-white/80 p-5 shadow-sm"
+              >
+                <h3 className="text-base font-semibold">{item.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <aside className="flex-1 space-y-6">
+          <div className="rounded-[32px] border border-black/10 bg-white p-6 shadow-xl">
+            <div className="space-y-3">
+              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Próximas aperturas
+              </p>
+              <h2 className="text-2xl font-semibold">
+                Reservá en la sucursal que mejor te quede.
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Elegí tu sede al momento de reservar y encontrá horarios reales
+                disponibles.
+              </p>
+            </div>
+            <div className="mt-6 grid gap-3">
+              <div className="rounded-2xl border border-dashed border-black/10 p-4 text-sm">
+                <p className="font-medium">Sucursales activas</p>
+                <p className="text-muted-foreground">
+                  Consultá disponibilidad real en el flujo de reserva.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-dashed border-black/10 p-4 text-sm">
+                <p className="font-medium">Horarios en tiempo real</p>
+                <p className="text-muted-foreground">
+                  Disponibilidad actualizada por profesional y servicio.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="servicios"
+            className="rounded-[32px] border border-black/10 bg-white/70 p-6 shadow-sm"
           >
-            Documentation
-          </a>
-        </div>
+            <h3 className="text-lg font-semibold">Servicios destacados</h3>
+            <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+              <li className="flex items-center justify-between">
+                <span>Color & Gloss</span>
+                <span>90 min</span>
+              </li>
+              <li className="flex items-center justify-between">
+                <span>Tratamiento reparador</span>
+                <span>60 min</span>
+              </li>
+              <li className="flex items-center justify-between">
+                <span>Brushing & Styling</span>
+                <span>45 min</span>
+              </li>
+            </ul>
+            <Button asChild className="mt-6 w-full">
+              <Link href="/reservar">Reservar un servicio</Link>
+            </Button>
+          </div>
+        </aside>
       </main>
     </div>
   );
