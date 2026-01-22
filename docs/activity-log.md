@@ -242,3 +242,17 @@ Se movió el flujo de comprobantes de seña a un bucket privado con upload serve
 - Evita exponer comprobantes en buckets públicos.
 - Guarda `deposit.proof_url` y `deposit.amount` con estado pending.
 - Mantiene reservas públicas sin modificar `rpc_public_create_reservation`.
+
+## 2026-01-21 — Seed MVP local + bootstrap auth users
+
+**Tipo:** feature  
+**Alcance:** backend | docs
+
+**Resumen**
+Se agregó un script idempotente para poblar datos MVP locales y crear usuarios auth (superadmin/admin/seller) para smoke tests.
+
+**Impacto**
+
+- Permite levantar un entorno local con datos base y usuarios reales.
+- No modifica el esquema ni migraciones.
+- Facilita smoke tests end-to-end de módulos clave.
