@@ -21,15 +21,16 @@ const STATUS_STYLES: Record<string, string> = {
   no_show: "bg-gray-200 text-gray-700",
 };
 
-export function StatusBadge({ status }: { status: string }) {
+export function StatusBadge({ status }: { status: string | null }) {
+  const resolvedStatus = status ?? "unknown";
   return (
     <Badge
       className={cn(
         "border-0",
-        STATUS_STYLES[status] ?? "bg-muted text-foreground",
+        STATUS_STYLES[resolvedStatus] ?? "bg-muted text-foreground",
       )}
     >
-      {STATUS_LABELS[status] ?? status}
+      {STATUS_LABELS[resolvedStatus] ?? "Sin estado"}
     </Badge>
   );
 }

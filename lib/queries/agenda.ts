@@ -1,10 +1,13 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { Database } from "@/types/supabase";
+
+type AppointmentStatus = Database["public"]["Enums"]["appointment_status"];
 
 type AgendaFilters = {
   branchId: string;
   date: string;
   staffId?: string | null;
-  status?: string | null;
+  status?: AppointmentStatus | null;
 };
 
 export async function fetchAgendaDay({

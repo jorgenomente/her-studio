@@ -112,17 +112,38 @@ export default async function ReportesPage({
 
   const { range, preset } = resolveRange(searchParams);
 
-  const [byMethod, bySource, recurrentSplit, topServices] = (await Promise.all([
-    fetchIncomeByMethod({ branchId: activeBranchId, range }),
-    fetchIncomeBySource({ branchId: activeBranchId, range }),
-    fetchIncomeRecurrentSplit({ branchId: activeBranchId, range }),
-    fetchTopServices({ branchId: activeBranchId, range }),
-  ])) as [
-    { method: string; total_amount: number; count: number }[],
-    { source: string | null; total_amount: number; count: number }[],
-    { is_recurrent: boolean | null; total_amount: number; count: number }[],
-    { service_id: string; service_name: string; total_amount: number; count: number }[],
-  ];
+  const [byMethodRaw, bySourceRaw, recurrentSplitRaw, topServicesRaw] =
+    await Promise.all([
+      fetchIncomeByMethod({ branchId: activeBranchId, range }),
+      fetchIncomeBySource({ branchId: activeBranchId, range }),
+      fetchIncomeRecurrentSplit({ branchId: activeBranchId, range }),
+      fetchTopServices({ branchId: activeBranchId, range }),
+    ]);
+
+  const byMethod = byMethodRaw as unknown as {
+    method: string;
+    total_amount: number;
+    count: number;
+  }[];
+
+  const bySource = bySourceRaw as unknown as {
+    source: string | null;
+    total_amount: number;
+    count: number;
+  }[];
+
+  const recurrentSplit = recurrentSplitRaw as unknown as {
+    is_recurrent: boolean | null;
+    total_amount: number;
+    count: number;
+  }[];
+
+  const topServices = topServicesRaw as unknown as {
+    service_id: string;
+    service_name: string;
+    total_amount: number;
+    count: number;
+  }[];
 
   const totalIncome = byMethod.reduce(
     (sum: number, row) => sum + (row.total_amount ?? 0),

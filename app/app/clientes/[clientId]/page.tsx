@@ -26,9 +26,9 @@ export default async function ClientDetailPage({ params }: PageProps) {
     );
   }
 
-  let client = null;
-  let appointments = [];
-  let payments = [];
+  let client: Awaited<ReturnType<typeof fetchClientDetail>> = null;
+  let appointments: Awaited<ReturnType<typeof fetchClientAppointments>> = [];
+  let payments: Awaited<ReturnType<typeof fetchClientPayments>> = [];
   let error: string | null = null;
 
   try {
@@ -61,7 +61,9 @@ export default async function ClientDetailPage({ params }: PageProps) {
     );
   }
 
-  const isRecurrent = client.visits_count > 1;
+  const visitsCount = client.visits_count ?? 0;
+  const totalSpent = client.total_spent ?? 0;
+  const isRecurrent = visitsCount > 1;
   const lastVisitLabel = client.last_visit_at
     ? format(new Date(client.last_visit_at), "dd/MM/yyyy")
     : "—";
@@ -132,11 +134,11 @@ export default async function ClientDetailPage({ params }: PageProps) {
       <div className="grid gap-4 md:grid-cols-3">
         <div className="bg-card rounded-xl border p-4">
           <p className="text-muted-foreground text-sm">Visitas</p>
-          <p className="text-lg font-semibold">{client.visits_count}</p>
+          <p className="text-lg font-semibold">{visitsCount}</p>
         </div>
         <div className="bg-card rounded-xl border p-4">
           <p className="text-muted-foreground text-sm">Gasto total</p>
-          <p className="text-lg font-semibold">{`$${client.total_spent.toFixed(2)}`}</p>
+          <p className="text-lg font-semibold">{`$${totalSpent.toFixed(2)}`}</p>
         </div>
         <div className="bg-card rounded-xl border p-4">
           <p className="text-muted-foreground text-sm">Última visita</p>

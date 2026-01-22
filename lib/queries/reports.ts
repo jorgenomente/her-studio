@@ -14,7 +14,7 @@ export async function fetchIncomeByMethod({
 }) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
-    .from("v_app_reports_income_by_method")
+    .from("v_app_reports_income_by_method" as unknown as "v_app_dashboard_day")
     .select("branch_id,paid_date,method,total_amount,count")
     .eq("branch_id", branchId)
     .gte("paid_date", range.from)
@@ -36,7 +36,7 @@ export async function fetchIncomeBySource({
 }) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
-    .from("v_app_reports_income_by_source")
+    .from("v_app_reports_income_by_source" as unknown as "v_app_dashboard_day")
     .select("branch_id,paid_date,source,total_amount,count")
     .eq("branch_id", branchId)
     .gte("paid_date", range.from)
@@ -58,7 +58,9 @@ export async function fetchIncomeRecurrentSplit({
 }) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
-    .from("v_app_reports_income_recurrent_split")
+    .from(
+      "v_app_reports_income_recurrent_split" as unknown as "v_app_dashboard_day",
+    )
     .select("branch_id,paid_date,is_recurrent,total_amount,count")
     .eq("branch_id", branchId)
     .gte("paid_date", range.from)
@@ -80,7 +82,7 @@ export async function fetchTopServices({
 }) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
-    .from("v_app_reports_top_services")
+    .from("v_app_reports_top_services" as unknown as "v_app_dashboard_day")
     .select("branch_id,paid_date,service_id,service_name,total_amount,count")
     .eq("branch_id", branchId)
     .gte("paid_date", range.from)

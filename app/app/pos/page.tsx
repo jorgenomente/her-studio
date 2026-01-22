@@ -77,8 +77,9 @@ export default async function PosPage({
     activeRole?.role === "admin" ||
     activeRole?.can_manage_payments;
 
-  let unpaidAppointments = [];
-  let paymentsDay = [];
+  let unpaidAppointments: Awaited<ReturnType<typeof fetchUnpaidAppointments>> =
+    [];
+  let paymentsDay: Awaited<ReturnType<typeof fetchPaymentsDay>> = [];
   let error: string | null = null;
 
   if (canManagePayments) {
@@ -194,8 +195,60 @@ export default async function PosPage({
         </div>
       ) : null}
       <PosClient
-        unpaidAppointments={unpaidAppointments}
-        paymentsDay={paymentsDay}
+        unpaidAppointments={(() => {
+          const typedUnpaid = unpaidAppointments as {
+            appointment_id: string | null;
+            start_at: string | null;
+            end_at: string | null;
+            status: string | null;
+            service_name: string | null;
+            staff_name: string | null;
+            client_name?: string | null;
+            client_phone?: string | null;
+            client_id?: string | null;
+          }[];
+
+          return typedUnpaid
+            .filter(
+              (appointment) =>
+                appointment.appointment_id &&
+                appointment.start_at &&
+                appointment.end_at &&
+                appointment.status &&
+                appointment.service_name &&
+                appointment.staff_name,
+            )
+            .map((appointment) => ({
+              appointment_id: appointment.appointment_id as string,
+              start_at: appointment.start_at as string,
+              end_at: appointment.end_at as string,
+              status: appointment.status as string,
+              service_name: appointment.service_name as string,
+              staff_name: appointment.staff_name as string,
+              client_name: appointment.client_name ?? null,
+              client_phone: appointment.client_phone ?? null,
+              client_id: appointment.client_id ?? null,
+            }));
+        })()}
+        paymentsDay={(() => {
+          const typedPayments = paymentsDay as {
+            payment_id: string | null;
+            appointment_id?: string | null;
+            amount: number | null;
+            method: string | null;
+            paid_at: string | null;
+          }[];
+
+          return typedPayments
+            .filter((payment) => payment.payment_id && payment.paid_at)
+            .map((payment) => ({
+              payment_id: payment.payment_id as string,
+              appointment_id: payment.appointment_id ?? null,
+              amount: payment.amount ?? 0,
+              method: payment.method ?? "other",
+              paid_at: payment.paid_at as string,
+            }));
+        })()}
         canManagePayments={Boolean(canManagePayments)}
         onPayAppointment={payAppointment}
         onWalkInPayment={createWalkInPayment}

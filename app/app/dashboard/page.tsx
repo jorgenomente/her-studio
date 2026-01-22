@@ -77,6 +77,26 @@ export default async function DashboardPage({
     );
   }
 
+  const rawData = data as unknown as {
+    total_income_day: number | null;
+    count_appointments_day: number | null;
+    count_no_show_day: number | null;
+    count_cancelled_day: number | null;
+    count_completed_day: number | null;
+    unpaid_count: number | null;
+    low_stock_count: number | null;
+  };
+
+  const normalizedData = {
+    total_income_day: rawData.total_income_day ?? 0,
+    count_appointments_day: rawData.count_appointments_day ?? 0,
+    count_no_show_day: rawData.count_no_show_day ?? 0,
+    count_cancelled_day: rawData.count_cancelled_day ?? 0,
+    count_completed_day: rawData.count_completed_day ?? 0,
+    unpaid_count: rawData.unpaid_count ?? 0,
+    low_stock_count: rawData.low_stock_count ?? 0,
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -108,7 +128,7 @@ export default async function DashboardPage({
         ) : null}
       </div>
 
-      <DashboardCards data={data} />
+      <DashboardCards data={normalizedData} />
     </div>
   );
 }

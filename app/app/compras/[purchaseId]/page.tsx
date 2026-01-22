@@ -59,7 +59,7 @@ export default async function PurchaseDetailPage({
     activeRole?.role === "admin" ||
     activeRole?.can_manage_stock;
 
-  let detail = [];
+  let detail: Awaited<ReturnType<typeof fetchPurchaseDetail>> = [];
   let error: string | null = null;
 
   try {
