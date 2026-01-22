@@ -7,6 +7,9 @@ import { AppointmentCard } from "@/components/app/agenda/appointment-card";
 import { Button } from "@/components/ui/button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { fetchAgendaDay } from "@/lib/queries/agenda";
+import type { Database } from "@/types/supabase";
+
+type AppointmentStatus = Database["public"]["Enums"]["appointment_status"];
 
 type SearchParams = {
   date?: string;
@@ -23,7 +26,18 @@ export default async function AgendaPage({
   const today = new Date();
   const dateValue = params.date ?? format(today, "yyyy-MM-dd");
   const staffId = params.staff ?? null;
-  const status = params.status ?? null;
+  const allowedStatuses: AppointmentStatus[] = [
+    "scheduled",
+    "scheduled_deposit_pending",
+    "scheduled_deposit_verified",
+    "in_progress",
+    "completed",
+    "cancelled",
+    "no_show",
+  ];
+  const status = allowedStatuses.includes(params.status as AppointmentStatus)
+    ? (params.status as AppointmentStatus)
+    : null;
 
   const cookieStore = await cookies();
   const activeBranchId = cookieStore.get("hs_branch_id")?.value ?? null;
@@ -44,7 +58,10 @@ export default async function AgendaPage({
     .eq("status", "active")
     .order("full_name", { ascending: true });
 
-  const typedStaffRows = (staffRows ?? []) as { id: string; full_name: string }[];
+  const typedStaffRows = (staffRows ?? []) as {
+    id: string;
+    full_name: string;
+  }[];
 
   let appointments: Awaited<ReturnType<typeof fetchAgendaDay>> = [];
   let error: string | null = null;

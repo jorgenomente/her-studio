@@ -69,7 +69,7 @@ export default async function ComprasPage({
     .order("name", { ascending: true });
   const typedProducts = (products ?? []) as { id: string; name: string }[];
 
-  let purchases = [];
+  let purchases: Awaited<ReturnType<typeof fetchPurchasesList>> = [];
   let error: string | null = null;
 
   try {
@@ -77,6 +77,26 @@ export default async function ComprasPage({
   } catch (err) {
     error = err instanceof Error ? err.message : "Error cargando compras.";
   }
+
+  const typedPurchases = purchases as {
+    purchase_id: string | null;
+    status: "pending" | "received" | null;
+    ordered_at: string | null;
+    received_at: string | null;
+    items_count: number | null;
+    ordered_total_qty: number | null;
+  }[];
+
+  const safePurchases = typedPurchases
+    .filter((purchase) => purchase.purchase_id && purchase.ordered_at)
+    .map((purchase) => ({
+      purchase_id: purchase.purchase_id as string,
+      status: purchase.status ?? "pending",
+      ordered_at: purchase.ordered_at as string,
+      received_at: purchase.received_at,
+      items_count: purchase.items_count ?? 0,
+      ordered_total_qty: purchase.ordered_total_qty ?? 0,
+    }));
 
   return (
     <div className="space-y-4">
@@ -113,7 +133,7 @@ export default async function ComprasPage({
           No hay compras registradas.
         </div>
       ) : (
-        <PurchasesList items={purchases} />
+        <PurchasesList items={safePurchases} />
       )}
     </div>
   );

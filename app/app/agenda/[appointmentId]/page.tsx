@@ -205,13 +205,21 @@ export default async function AppointmentDetailPage({
         status={appointment.status}
       />
 
-      <AppointmentActions
-        appointmentId={appointment.appointment_id}
-        branchId={appointment.branch_id}
-        status={appointment.status}
-        canManageAgenda={Boolean(canManageAgenda)}
-        onUpdateStatus={updateStatus}
-      />
+      {appointment.appointment_id &&
+      appointment.branch_id &&
+      appointment.status ? (
+        <AppointmentActions
+          appointmentId={appointment.appointment_id}
+          branchId={appointment.branch_id}
+          status={appointment.status}
+          canManageAgenda={Boolean(canManageAgenda)}
+          onUpdateStatus={updateStatus}
+        />
+      ) : (
+        <div className="text-muted-foreground rounded-xl border border-dashed p-4 text-sm">
+          Falta información para gestionar el estado de la cita.
+        </div>
+      )}
 
       <div className="grid gap-4 md:grid-cols-2">
         <AppointmentServiceCard
@@ -227,17 +235,23 @@ export default async function AppointmentDetailPage({
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <AppointmentDepositCard
-          appointmentId={appointment.appointment_id}
-          branchId={appointment.branch_id}
-          hasPaymentPermission={Boolean(canManagePayments)}
-          depositId={appointment.deposit_id}
-          amount={appointment.deposit_amount}
-          status={appointment.deposit_status}
-          proofUrl={appointment.deposit_proof_url}
-          onCreateOrUpdate={createOrUpdateDeposit}
-          onVerify={verifyDeposit}
-        />
+        {appointment.appointment_id && appointment.branch_id ? (
+          <AppointmentDepositCard
+            appointmentId={appointment.appointment_id}
+            branchId={appointment.branch_id}
+            hasPaymentPermission={Boolean(canManagePayments)}
+            depositId={appointment.deposit_id}
+            amount={appointment.deposit_amount}
+            status={appointment.deposit_status}
+            proofUrl={appointment.deposit_proof_url}
+            onCreateOrUpdate={createOrUpdateDeposit}
+            onVerify={verifyDeposit}
+          />
+        ) : (
+          <div className="text-muted-foreground rounded-xl border border-dashed p-4 text-sm">
+            Falta información para gestionar la seña.
+          </div>
+        )}
         <AppointmentPaymentCard
           amount={appointment.payment_amount}
           method={appointment.payment_method}

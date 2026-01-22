@@ -62,7 +62,7 @@ export default async function StockPage({
     activeRole?.role === "admin" ||
     activeRole?.can_manage_stock;
 
-  let items = [];
+  let items: Awaited<ReturnType<typeof fetchStockSnapshot>> = [];
   let error: string | null = null;
 
   try {
@@ -87,7 +87,27 @@ export default async function StockPage({
       <StockSearch initialQuery={query} />
 
       <StockClient
-        items={items}
+        items={(() => {
+          const typedItems = items as {
+            product_id: string | null;
+            product_name: string | null;
+            unit: string | null;
+            qty_on_hand: number | null;
+            stock_min: number | null;
+            is_low_stock: boolean | null;
+          }[];
+
+          return typedItems
+            .filter((item) => item.product_id && item.product_name && item.unit)
+            .map((item) => ({
+              product_id: item.product_id as string,
+              product_name: item.product_name as string,
+              unit: item.unit as string,
+              qty_on_hand: item.qty_on_hand ?? 0,
+              stock_min: item.stock_min ?? 0,
+              is_low_stock: item.is_low_stock ?? false,
+            }));
+        })()}
         canManageStock={Boolean(canManageStock)}
         onCreateMovement={createStockMovementAction}
       />

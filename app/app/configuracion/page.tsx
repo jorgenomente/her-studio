@@ -77,54 +77,61 @@ export default async function ConfiguracionPage({
     );
   }
 
-  const allBranches = (await fetchBranches()) as { id: string; name: string; status?: string | null }[];
+  const allBranches = (await fetchBranches()) as {
+    id: string;
+    name: string;
+    status?: string | null;
+  }[];
   const accessibleBranchIds = isSuperadmin
     ? allBranches.map((branch) => branch.id)
     : branchRoles.map((role) => role.branch_id);
 
-  const [staff, availability, services, users] = (await Promise.all([
+  const [staffRaw, availabilityRaw, servicesRaw, usersRaw] = await Promise.all([
     fetchStaffList({ branchId: activeBranchId }),
     fetchStaffAvailability({ branchId: activeBranchId }),
     fetchBranchServices({ branchId: activeBranchId }),
     fetchUsersList({ branchIds: accessibleBranchIds }),
-  ])) as [
-    {
-      staff_id: string;
-      branch_id: string;
-      full_name: string;
-      email?: string | null;
-      phone?: string | null;
-      status: string;
-    }[],
-    {
-      staff_id: string;
-      weekday: number;
-      start_time: string | null;
-      end_time: string | null;
-      is_active: boolean;
-    }[],
-    {
-      service_id: string;
-      service_name: string;
-      duration_min: number;
-      price_base: number;
-      is_active: boolean;
-      is_enabled: boolean;
-      is_available: boolean;
-    }[],
-    {
-      user_id: string;
-      branch_id: string;
-      branch_name: string;
-      full_name?: string | null;
-      email?: string | null;
-      role: "admin" | "seller" | "superadmin";
-      can_manage_agenda: boolean;
-      can_manage_payments: boolean;
-      can_manage_stock: boolean;
-      is_active: boolean;
-    }[],
-  ];
+  ]);
+
+  const staff = staffRaw as unknown as {
+    staff_id: string;
+    branch_id: string;
+    full_name: string;
+    email?: string | null;
+    phone?: string | null;
+    status: string;
+  }[];
+
+  const availability = availabilityRaw as unknown as {
+    staff_id: string;
+    weekday: number;
+    start_time: string | null;
+    end_time: string | null;
+    is_active: boolean;
+  }[];
+
+  const services = servicesRaw as unknown as {
+    service_id: string;
+    service_name: string;
+    duration_min: number;
+    price_base: number;
+    is_active: boolean;
+    is_enabled: boolean;
+    is_available: boolean;
+  }[];
+
+  const users = usersRaw as unknown as {
+    user_id: string;
+    branch_id: string;
+    branch_name: string;
+    full_name?: string | null;
+    email?: string | null;
+    role: "admin" | "seller" | "superadmin";
+    can_manage_agenda: boolean;
+    can_manage_payments: boolean;
+    can_manage_stock: boolean;
+    is_active: boolean;
+  }[];
 
   const branches = isSuperadmin
     ? allBranches

@@ -20,7 +20,7 @@ export async function fetchDashboardDay({ branchId }: { branchId: string }) {
 export async function fetchDashboardGlobalDay() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
-    .from("v_app_dashboard_global_day")
+    .from("v_app_dashboard_global_day" as unknown as "v_app_dashboard_day")
     .select(
       "branch_id,total_income_day,count_appointments_day,count_no_show_day,count_cancelled_day,count_completed_day,unpaid_count,low_stock_count",
     )

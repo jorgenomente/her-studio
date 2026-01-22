@@ -25,7 +25,7 @@ export default async function ClientesPage({
     );
   }
 
-  let clients = [];
+  let clients: Awaited<ReturnType<typeof fetchClientsList>> = [];
   let error: string | null = null;
 
   try {

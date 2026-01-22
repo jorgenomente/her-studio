@@ -3,7 +3,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export async function fetchStaffList({ branchId }: { branchId: string }) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
-    .from("v_app_staff_list")
+    .from("v_app_staff_list" as unknown as "v_app_dashboard_day")
     .select("staff_id,branch_id,full_name,email,phone,status")
     .eq("branch_id", branchId)
     .order("full_name", { ascending: true });
@@ -22,7 +22,7 @@ export async function fetchStaffAvailability({
 }) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
-    .from("v_app_staff_availability")
+    .from("v_app_staff_availability" as unknown as "v_app_dashboard_day")
     .select("staff_id,weekday,start_time,end_time,is_active")
     .eq("branch_id", branchId);
 
@@ -36,7 +36,7 @@ export async function fetchStaffAvailability({
 export async function fetchBranchServices({ branchId }: { branchId: string }) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
-    .from("v_app_branch_services")
+    .from("v_app_branch_services" as unknown as "v_app_dashboard_day")
     .select(
       "branch_id,service_id,service_name,duration_min,price_base,is_active,is_enabled,is_available",
     )
@@ -53,7 +53,7 @@ export async function fetchBranchServices({ branchId }: { branchId: string }) {
 export async function fetchUsersList({ branchIds }: { branchIds: string[] }) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
-    .from("v_app_users_list")
+    .from("v_app_users_list" as unknown as "v_app_dashboard_day")
     .select(
       "user_id,branch_id,branch_name,full_name,email,role,can_manage_agenda,can_manage_payments,can_manage_stock,is_active",
     )
